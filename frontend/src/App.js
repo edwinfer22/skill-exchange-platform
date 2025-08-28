@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './App.css';
 
+// Use environment variable for API URL, with a fallback for local development
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
 function App() {
   // State for the creation form
   const [name, setName] = useState('');
@@ -19,7 +22,7 @@ function App() {
   // Function to fetch all unique skills
   const fetchSkills = useCallback(async () => {
     try {
-      const response = await fetch('http://localhost:8000/skills/', { cache: 'no-cache' });
+      const response = await fetch(`${API_URL}/skills/`, { cache: 'no-cache' });
       if (response.ok) {
         const skills = await response.json();
         setAllSkills(skills);
@@ -45,7 +48,7 @@ function App() {
     };
 
     try {
-      const response = await fetch('http://localhost:8000/users/', {
+      const response = await fetch(`${API_URL}/users/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,7 +58,7 @@ function App() {
 
       if (response.ok) {
         const newUser = await response.json();
-        alert(`¡Usuario \"${newUser.name}\" creado con éxito!`);
+        alert(`¡Usuario "${newUser.name}" creado con éxito!`);
         // Limpiar el formulario
         setName('');
         setEmail('');
@@ -82,13 +85,13 @@ function App() {
     setSearchResults([]);
 
     try {
-      const response = await fetch(`http://localhost:8000/users/search/?skill=${encodeURIComponent(skillToSearch)}`);
+      const response = await fetch(`${API_URL}/users/search/?skill=${encodeURIComponent(skillToSearch)}`);
       
       if (response.ok) {
         const users = await response.json();
         setSearchResults(users);
         if (users.length === 0) {
-          setSearchMessage(`No se encontraron usuarios que ofrezcan la habilidad: \"${skillToSearch}\".`);
+          setSearchMessage(`No se encontraron usuarios que ofrezcan la habilidad: "${skillToSearch}".`);
         }
       } else {
         alert('Error al realizar la búsqueda.');
